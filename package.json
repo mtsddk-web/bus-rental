@@ -1,0 +1,12 @@
+{
+  "name": "bus-rental",
+  "version": "1.0.0",
+  "description": "System rezerwacji busa Renault Master",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
