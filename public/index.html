@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wynajem Busa Renault Master | Tychy, Mikołów</title>
-    <meta name="description" content="Wynajem busa Renault Master L3H2 w Tychach i Mikołowie. Sprawdź dostępność i zarezerwuj online.">
+    <title>Wynajem Busa Renault Master | Tychy, Mikolow</title>
+    <meta name="description" content="Wynajem busa Renault Master L3H2 w Tychach i Mikołowie. Sprawdz dostepnosc i zarezerwuj online.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -16,9 +16,9 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
             min-height: 100vh;
-            color: #fff;
+            color: #1e293b;
         }
 
         .container {
@@ -36,21 +36,23 @@
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 10px;
+            color: #0f172a;
         }
 
         .subtitle {
-            color: #94a3b8;
+            color: #64748b;
             font-size: 1rem;
         }
 
         .bus-specs {
-            background: rgba(255,255,255,0.05);
+            background: white;
             border-radius: 12px;
             padding: 20px;
             margin: 20px 0;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .spec {
@@ -60,19 +62,20 @@
         .spec-value {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #60a5fa;
+            color: #2563eb;
         }
 
         .spec-label {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: #64748b;
         }
 
         .booking-form {
-            background: rgba(255,255,255,0.08);
+            background: white;
             border-radius: 16px;
             padding: 25px;
             margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .form-section {
@@ -82,7 +85,7 @@
         .form-section h3 {
             font-size: 1.1rem;
             margin-bottom: 15px;
-            color: #e2e8f0;
+            color: #0f172a;
         }
 
         .rental-types {
@@ -92,8 +95,8 @@
         }
 
         .rental-type {
-            background: rgba(255,255,255,0.05);
-            border: 2px solid transparent;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
             border-radius: 12px;
             padding: 15px 10px;
             text-align: center;
@@ -102,30 +105,32 @@
         }
 
         .rental-type:hover {
-            background: rgba(255,255,255,0.1);
+            background: #f1f5f9;
+            border-color: #cbd5e1;
         }
 
         .rental-type.selected {
-            border-color: #60a5fa;
-            background: rgba(96, 165, 250, 0.15);
+            border-color: #2563eb;
+            background: #eff6ff;
         }
 
         .rental-type .price {
             font-size: 1.3rem;
             font-weight: 700;
-            color: #60a5fa;
+            color: #2563eb;
         }
 
         .rental-type .label {
             font-size: 0.85rem;
-            color: #94a3b8;
+            color: #64748b;
             margin-top: 5px;
         }
 
         .calendar-container {
-            background: rgba(0,0,0,0.2);
+            background: #f8fafc;
             border-radius: 12px;
             padding: 15px;
+            border: 1px solid #e2e8f0;
         }
 
         .calendar-header {
@@ -136,9 +141,9 @@
         }
 
         .calendar-nav {
-            background: rgba(255,255,255,0.1);
+            background: #e2e8f0;
             border: none;
-            color: white;
+            color: #475569;
             width: 36px;
             height: 36px;
             border-radius: 8px;
@@ -147,11 +152,12 @@
         }
 
         .calendar-nav:hover {
-            background: rgba(255,255,255,0.2);
+            background: #cbd5e1;
         }
 
         .month-year {
             font-weight: 600;
+            color: #0f172a;
         }
 
         .calendar-grid {
@@ -165,6 +171,7 @@
             font-size: 0.75rem;
             color: #64748b;
             padding: 8px 0;
+            font-weight: 600;
         }
 
         .calendar-day {
@@ -176,31 +183,56 @@
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.2s;
+            color: #334155;
         }
 
         .calendar-day:hover:not(.disabled):not(.booked) {
-            background: rgba(96, 165, 250, 0.3);
+            background: #dbeafe;
         }
 
-        .calendar-day.selected {
-            background: #60a5fa;
+        .calendar-day.selected, .calendar-day.in-range {
+            background: #2563eb;
             color: white;
             font-weight: 600;
         }
 
+        .calendar-day.range-start {
+            border-radius: 8px 0 0 8px;
+        }
+
+        .calendar-day.range-end {
+            border-radius: 0 8px 8px 0;
+        }
+
+        .calendar-day.in-range:not(.range-start):not(.range-end) {
+            background: #93c5fd;
+            border-radius: 0;
+        }
+
         .calendar-day.booked {
-            background: rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
+            background: #fee2e2;
+            color: #dc2626;
             cursor: not-allowed;
         }
 
         .calendar-day.disabled {
-            color: #475569;
+            color: #cbd5e1;
             cursor: not-allowed;
         }
 
         .calendar-day.today {
-            border: 2px solid #60a5fa;
+            border: 2px solid #2563eb;
+        }
+
+        .date-range-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+            text-align: center;
+            color: #1e40af;
+            font-size: 0.9rem;
         }
 
         .time-selector {
@@ -211,24 +243,39 @@
         }
 
         .time-input {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: white;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             padding: 12px;
-            color: white;
+            color: #1e293b;
             font-size: 1rem;
         }
 
         .time-input:focus {
             outline: none;
-            border-color: #60a5fa;
+            border-color: #2563eb;
         }
 
         label {
             display: block;
             font-size: 0.85rem;
-            color: #94a3b8;
+            color: #64748b;
             margin-bottom: 5px;
+        }
+
+        .time-warning {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            color: #92400e;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .time-warning.show {
+            display: block;
         }
 
         .contact-fields {
@@ -237,40 +284,42 @@
         }
 
         .contact-fields input {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             padding: 14px;
-            color: white;
+            color: #1e293b;
             font-size: 1rem;
             width: 100%;
         }
 
         .contact-fields input:focus {
             outline: none;
-            border-color: #60a5fa;
+            border-color: #2563eb;
+            background: white;
         }
 
         .contact-fields input::placeholder {
-            color: #64748b;
+            color: #94a3b8;
         }
 
         .price-summary {
-            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
             border-radius: 12px;
             padding: 20px;
             margin: 20px 0;
+            color: white;
         }
 
         .price-row {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
-            color: #94a3b8;
+            color: #bfdbfe;
         }
 
         .price-row.total {
-            border-top: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(255,255,255,0.2);
             padding-top: 10px;
             margin-top: 10px;
             font-size: 1.2rem;
@@ -279,7 +328,7 @@
         }
 
         .price-row.total .amount {
-            color: #60a5fa;
+            color: #93c5fd;
         }
 
         .terms {
@@ -288,20 +337,22 @@
             gap: 10px;
             margin: 20px 0;
             font-size: 0.85rem;
-            color: #94a3b8;
+            color: #64748b;
         }
 
         .terms input[type="checkbox"] {
             margin-top: 3px;
+            width: 18px;
+            height: 18px;
         }
 
         .terms a {
-            color: #60a5fa;
+            color: #2563eb;
         }
 
         .submit-btn {
             width: 100%;
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             border: none;
             color: white;
             padding: 16px;
@@ -314,30 +365,33 @@
 
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
         }
 
         .submit-btn:disabled {
-            background: #475569;
+            background: #94a3b8;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
 
         .info-box {
-            background: rgba(96, 165, 250, 0.1);
-            border-left: 3px solid #60a5fa;
+            background: #eff6ff;
+            border-left: 3px solid #2563eb;
             padding: 15px;
             border-radius: 0 8px 8px 0;
             margin: 20px 0;
             font-size: 0.9rem;
-            color: #94a3b8;
+            color: #475569;
         }
 
         .success-message {
             display: none;
             text-align: center;
             padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .success-message.show {
@@ -347,24 +401,29 @@
         .success-icon {
             font-size: 4rem;
             margin-bottom: 20px;
+            color: #16a34a;
         }
 
         .success-message h2 {
             margin-bottom: 15px;
+            color: #0f172a;
         }
 
         .success-details {
-            background: rgba(255,255,255,0.05);
+            background: #f8fafc;
             border-radius: 12px;
             padding: 20px;
             margin: 20px 0;
             text-align: left;
+            border: 1px solid #e2e8f0;
         }
 
         .loading {
             display: none;
             text-align: center;
-            padding: 20px;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
         }
 
         .loading.show {
@@ -374,8 +433,8 @@
         .spinner {
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #60a5fa;
+            border: 3px solid #e2e8f0;
+            border-top-color: #2563eb;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 15px;
@@ -391,7 +450,7 @@
             justify-content: center;
             margin-top: 15px;
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: #64748b;
         }
 
         .legend-item {
@@ -407,11 +466,15 @@
         }
 
         .legend-dot.available {
-            background: rgba(96, 165, 250, 0.3);
+            background: #dbeafe;
         }
 
         .legend-dot.booked {
-            background: rgba(239, 68, 68, 0.3);
+            background: #fee2e2;
+        }
+
+        .legend-dot.selected {
+            background: #2563eb;
         }
 
         footer {
@@ -422,7 +485,7 @@
         }
 
         footer a {
-            color: #60a5fa;
+            color: #2563eb;
             text-decoration: none;
         }
 
@@ -472,27 +535,27 @@
                 <div class="form-section">
                     <h3>1. Wybierz rodzaj wynajmu</h3>
                     <div class="rental-types" id="rentalTypes">
-                        <div class="rental-type" data-type="4h" data-price="190">
+                        <div class="rental-type" data-type="4h" data-price="190" data-min-days="0" data-max-days="0">
                             <div class="price">190 zl</div>
                             <div class="label">4 godziny</div>
                         </div>
-                        <div class="rental-type" data-type="1-2d" data-price="250">
+                        <div class="rental-type" data-type="1-2d" data-price="250" data-min-days="1" data-max-days="2">
                             <div class="price">250 zl</div>
                             <div class="label">1-2 doby/doba</div>
                         </div>
-                        <div class="rental-type" data-type="3-4d" data-price="230">
+                        <div class="rental-type" data-type="3-4d" data-price="230" data-min-days="3" data-max-days="4">
                             <div class="price">230 zl</div>
                             <div class="label">3-4 doby/doba</div>
                         </div>
-                        <div class="rental-type" data-type="5-10d" data-price="210">
+                        <div class="rental-type" data-type="5-10d" data-price="210" data-min-days="5" data-max-days="10">
                             <div class="price">210 zl</div>
                             <div class="label">5-10 dob/doba</div>
                         </div>
-                        <div class="rental-type" data-type="11-30d" data-price="190">
+                        <div class="rental-type" data-type="11-30d" data-price="190" data-min-days="11" data-max-days="30">
                             <div class="price">190 zl</div>
                             <div class="label">11-30 dni/doba</div>
                         </div>
-                        <div class="rental-type" data-type="weekend" data-price="600">
+                        <div class="rental-type" data-type="weekend" data-price="600" data-min-days="2" data-max-days="3">
                             <div class="price">600 zl</div>
                             <div class="label">Weekend</div>
                         </div>
@@ -514,10 +577,18 @@
                                 <span>Dostepny</span>
                             </div>
                             <div class="legend-item">
+                                <div class="legend-dot selected"></div>
+                                <span>Wybrany</span>
+                            </div>
+                            <div class="legend-item">
                                 <div class="legend-dot booked"></div>
                                 <span>Zajety</span>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="date-range-info" id="dateRangeInfo" style="display: none;">
+                        <span id="dateRangeText"></span>
                     </div>
 
                     <div class="time-selector" id="timeSelector" style="display: none;">
@@ -527,8 +598,12 @@
                         </div>
                         <div>
                             <label>Godzina zwrotu</label>
-                            <input type="time" class="time-input" id="endTime" value="17:00">
+                            <input type="time" class="time-input" id="endTime" value="13:00">
                         </div>
+                    </div>
+
+                    <div class="time-warning" id="timeWarning">
+                        Wybrales wiecej niz 4 godziny. Dla dluzszego wynajmu wybierz opcje "1-2 doby" lub wieksza.
                     </div>
                 </div>
 
@@ -555,6 +630,10 @@
                         <span>Wynajem (<span id="summaryType"></span>)</span>
                         <span id="summaryBase">0 zl</span>
                     </div>
+                    <div class="price-row" id="summaryDaysRow" style="display: none;">
+                        <span>Liczba dni: <span id="summaryDays"></span></span>
+                        <span></span>
+                    </div>
                     <div class="price-row">
                         <span>Kaucja zwrotna</span>
                         <span>600 zl</span>
@@ -570,7 +649,7 @@
                     - Limit 200 km/dobe (powyzej +0,40 zl/km)<br>
                     - Kaucja 600 zl (zwrotna)<br>
                     - Wymagane prawo jazdy kat. B<br>
-                    - Odbiór: Tychy lub Mikolow<br>
+                    - Odbior: Tychy lub Mikolow<br>
                     - Faktura VAT 23%
                 </div>
 
@@ -620,12 +699,12 @@
     <script>
         // Konfiguracja cennika
         const PRICING = {
-            '4h': { price: 190, label: '4 godziny', days: 0.17 },
-            '1-2d': { price: 250, label: '1-2 doby', days: 1, perDay: true },
-            '3-4d': { price: 230, label: '3-4 doby', days: 1, perDay: true },
-            '5-10d': { price: 210, label: '5-10 dob', days: 1, perDay: true },
-            '11-30d': { price: 190, label: '11-30 dni', days: 1, perDay: true },
-            'weekend': { price: 600, label: 'Weekend (pt-pn)', days: 3 }
+            '4h': { price: 190, label: '4 godziny', minDays: 0, maxDays: 0, perDay: false },
+            '1-2d': { price: 250, label: '1-2 doby', minDays: 1, maxDays: 2, perDay: true },
+            '3-4d': { price: 230, label: '3-4 doby', minDays: 3, maxDays: 4, perDay: true },
+            '5-10d': { price: 210, label: '5-10 dob', minDays: 5, maxDays: 10, perDay: true },
+            '11-30d': { price: 190, label: '11-30 dni', minDays: 11, maxDays: 30, perDay: true },
+            'weekend': { price: 600, label: 'Weekend (pt-pn)', minDays: 2, maxDays: 3, perDay: false }
         };
 
         const DEPOSIT = 600;
@@ -633,11 +712,12 @@
         // Stan aplikacji
         let state = {
             selectedType: null,
-            selectedDate: null,
+            startDate: null,
             endDate: null,
             bookedDates: [],
             currentMonth: new Date().getMonth(),
-            currentYear: new Date().getFullYear()
+            currentYear: new Date().getFullYear(),
+            selectingEndDate: false
         };
 
         const MONTHS_PL = ['Styczen', 'Luty', 'Marzec', 'Kwiecien', 'Maj', 'Czerwiec',
@@ -664,20 +744,16 @@
 
             monthYear.textContent = `${MONTHS_PL[state.currentMonth]} ${state.currentYear}`;
 
-            // Naglowki dni
             let html = DAYS_PL.map(d => `<div class="calendar-day-header">${d}</div>`).join('');
 
-            // Pierwszy dzien miesiaca
             const firstDay = new Date(state.currentYear, state.currentMonth, 1);
             let startDay = firstDay.getDay();
-            startDay = startDay === 0 ? 6 : startDay - 1; // Poniedzialek = 0
+            startDay = startDay === 0 ? 6 : startDay - 1;
 
-            // Dni poprzedniego miesiaca
             for (let i = 0; i < startDay; i++) {
                 html += '<div class="calendar-day disabled"></div>';
             }
 
-            // Dni miesiaca
             const daysInMonth = new Date(state.currentYear, state.currentMonth + 1, 0).getDate();
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -698,7 +774,16 @@
                     classes.push('today');
                 }
 
-                if (state.selectedDate === dateStr) {
+                // Zaznaczenie zakresu dat
+                if (state.startDate && state.endDate) {
+                    const start = new Date(state.startDate);
+                    const end = new Date(state.endDate);
+                    if (date >= start && date <= end) {
+                        classes.push('in-range');
+                        if (dateStr === state.startDate) classes.push('range-start');
+                        if (dateStr === state.endDate) classes.push('range-end');
+                    }
+                } else if (state.startDate === dateStr) {
                     classes.push('selected');
                 }
 
@@ -707,10 +792,11 @@
 
             grid.innerHTML = html;
 
-            // Event listeners dla dni
             grid.querySelectorAll('.calendar-day:not(.disabled):not(.booked)').forEach(el => {
                 el.addEventListener('click', () => selectDate(el.dataset.date));
             });
+
+            updateDateRangeInfo();
         }
 
         function formatDate(date) {
@@ -727,10 +813,73 @@
         }
 
         function selectDate(dateStr) {
-            state.selectedDate = dateStr;
+            const pricing = state.selectedType ? PRICING[state.selectedType] : null;
+
+            // Dla 4h - tylko jeden dzien
+            if (state.selectedType === '4h') {
+                state.startDate = dateStr;
+                state.endDate = dateStr;
+                document.getElementById('timeSelector').style.display = 'grid';
+                renderCalendar();
+                updatePriceSummary();
+                validateTimeRange();
+                return;
+            }
+
+            // Dla wielodniowych - wybor zakresu
+            if (!state.startDate || (state.startDate && state.endDate)) {
+                // Pierwszy klik lub reset
+                state.startDate = dateStr;
+                state.endDate = null;
+                state.selectingEndDate = true;
+            } else if (state.selectingEndDate) {
+                // Drugi klik - data koncowa
+                const start = new Date(state.startDate);
+                const end = new Date(dateStr);
+
+                if (end < start) {
+                    // Jesli kliknieto wczesniejsza date, zamien
+                    state.endDate = state.startDate;
+                    state.startDate = dateStr;
+                } else {
+                    state.endDate = dateStr;
+                }
+                state.selectingEndDate = false;
+                document.getElementById('timeSelector').style.display = 'grid';
+            }
+
             renderCalendar();
             updatePriceSummary();
-            document.getElementById('timeSelector').style.display = 'grid';
+        }
+
+        function updateDateRangeInfo() {
+            const info = document.getElementById('dateRangeInfo');
+            const text = document.getElementById('dateRangeText');
+
+            if (state.selectedType === '4h') {
+                if (state.startDate) {
+                    info.style.display = 'block';
+                    text.textContent = `Wybrany dzien: ${formatDatePL(state.startDate)}`;
+                } else {
+                    info.style.display = 'none';
+                }
+            } else if (state.startDate && !state.endDate && state.selectingEndDate) {
+                info.style.display = 'block';
+                text.textContent = `Od: ${formatDatePL(state.startDate)} - Kliknij date zakonczenia`;
+            } else if (state.startDate && state.endDate) {
+                const days = getDaysBetween(state.startDate, state.endDate);
+                info.style.display = 'block';
+                text.textContent = `Od: ${formatDatePL(state.startDate)} do: ${formatDatePL(state.endDate)} (${days} ${days === 1 ? 'dzien' : 'dni'})`;
+            } else {
+                info.style.display = 'none';
+            }
+        }
+
+        function getDaysBetween(start, end) {
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+            const diffTime = Math.abs(endDate - startDate);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
         }
 
         // Wybor typu wynajmu
@@ -742,7 +891,49 @@
             type.classList.add('selected');
 
             state.selectedType = type.dataset.type;
+
+            // Reset dat przy zmianie typu
+            state.startDate = null;
+            state.endDate = null;
+            state.selectingEndDate = false;
+            document.getElementById('timeSelector').style.display = 'none';
+            document.getElementById('timeWarning').classList.remove('show');
+
+            renderCalendar();
             updatePriceSummary();
+        });
+
+        // Walidacja czasu dla 4h
+        function validateTimeRange() {
+            if (state.selectedType !== '4h') {
+                document.getElementById('timeWarning').classList.remove('show');
+                return true;
+            }
+
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+
+            const start = new Date(`2000-01-01T${startTime}`);
+            const end = new Date(`2000-01-01T${endTime}`);
+            const diffHours = (end - start) / (1000 * 60 * 60);
+
+            if (diffHours > 4) {
+                document.getElementById('timeWarning').classList.add('show');
+                return false;
+            } else {
+                document.getElementById('timeWarning').classList.remove('show');
+                return true;
+            }
+        }
+
+        document.getElementById('startTime').addEventListener('change', () => {
+            validateTimeRange();
+            checkFormValidity();
+        });
+
+        document.getElementById('endTime').addEventListener('change', () => {
+            validateTimeRange();
+            checkFormValidity();
         });
 
         // Nawigacja kalendarza
@@ -769,7 +960,14 @@
             const summary = document.getElementById('priceSummary');
             const submitBtn = document.getElementById('submitBtn');
 
-            if (!state.selectedType || !state.selectedDate) {
+            if (!state.selectedType || !state.startDate) {
+                summary.style.display = 'none';
+                submitBtn.disabled = true;
+                return;
+            }
+
+            // Dla wielodniowych wymuszaj date koncowa
+            if (state.selectedType !== '4h' && !state.endDate) {
                 summary.style.display = 'none';
                 submitBtn.disabled = true;
                 return;
@@ -777,6 +975,16 @@
 
             const pricing = PRICING[state.selectedType];
             let totalRental = pricing.price;
+            let daysCount = 1;
+
+            if (pricing.perDay && state.endDate) {
+                daysCount = getDaysBetween(state.startDate, state.endDate);
+                totalRental = pricing.price * daysCount;
+                document.getElementById('summaryDays').textContent = daysCount;
+                document.getElementById('summaryDaysRow').style.display = 'flex';
+            } else {
+                document.getElementById('summaryDaysRow').style.display = 'none';
+            }
 
             document.getElementById('summaryType').textContent = pricing.label;
             document.getElementById('summaryBase').textContent = `${totalRental} zl`;
@@ -792,11 +1000,15 @@
             const name = document.getElementById('clientName').value.trim();
             const phone = document.getElementById('clientPhone').value.trim();
             const terms = document.getElementById('termsAccepted').checked;
+            const timeValid = validateTimeRange();
 
-            submitBtn.disabled = !(state.selectedType && state.selectedDate && name && phone && terms);
+            const hasDate = state.selectedType === '4h'
+                ? state.startDate
+                : (state.startDate && state.endDate);
+
+            submitBtn.disabled = !(state.selectedType && hasDate && name && phone && terms && timeValid);
         }
 
-        // Event listeners dla pol formularza
         ['clientName', 'clientPhone', 'clientEmail', 'termsAccepted'].forEach(id => {
             document.getElementById(id).addEventListener('input', checkFormValidity);
             document.getElementById(id).addEventListener('change', checkFormValidity);
@@ -813,11 +1025,18 @@
             form.style.display = 'none';
             loading.classList.add('show');
 
+            const pricing = PRICING[state.selectedType];
+            const daysCount = state.endDate ? getDaysBetween(state.startDate, state.endDate) : 1;
+            const totalPrice = pricing.perDay ? pricing.price * daysCount : pricing.price;
+
             const bookingData = {
                 type: state.selectedType,
-                typeLabel: PRICING[state.selectedType].label,
-                price: PRICING[state.selectedType].price,
-                date: state.selectedDate,
+                typeLabel: pricing.label,
+                price: totalPrice,
+                pricePerDay: pricing.price,
+                days: daysCount,
+                date: state.startDate,
+                endDate: state.endDate || state.startDate,
                 startTime: document.getElementById('startTime').value,
                 endTime: document.getElementById('endTime').value,
                 clientName: document.getElementById('clientName').value.trim(),
@@ -837,9 +1056,14 @@
                 loading.classList.remove('show');
 
                 if (result.success) {
+                    let dateDisplay = formatDatePL(bookingData.date);
+                    if (bookingData.date !== bookingData.endDate) {
+                        dateDisplay = `${formatDatePL(bookingData.date)} - ${formatDatePL(bookingData.endDate)}`;
+                    }
+
                     document.getElementById('confirmationDetails').innerHTML = `
                         <strong>Typ wynajmu:</strong> ${bookingData.typeLabel}<br>
-                        <strong>Data:</strong> ${formatDatePL(bookingData.date)}<br>
+                        <strong>Termin:</strong> ${dateDisplay}<br>
                         <strong>Godziny:</strong> ${bookingData.startTime} - ${bookingData.endTime}<br>
                         <strong>Cena wynajmu:</strong> ${bookingData.price} zl<br>
                         <strong>Kaucja:</strong> ${DEPOSIT} zl<br>
@@ -860,10 +1084,9 @@
         function formatDatePL(dateStr) {
             const date = new Date(dateStr);
             return date.toLocaleDateString('pl-PL', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short'
             });
         }
 

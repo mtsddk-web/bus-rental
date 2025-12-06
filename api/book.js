@@ -1,4 +1,4 @@
-// API endpoint: Tworzy rezerwację w ClickUp
+// API endpoint: Tworzy rezerwacje w ClickUp
 // POST /api/book
 
 export default async function handler(req, res) {
@@ -17,14 +17,16 @@ export default async function handler(req, res) {
 
     const CLICKUP_API_TOKEN = process.env.CLICKUP_API_TOKEN;
     const CLICKUP_LIST_ID = process.env.CLICKUP_LIST_ID || '901503815767';
-    const NOTIFICATION_PHONE = process.env.NOTIFICATION_PHONE || '518618058';
 
     try {
         const {
             type,
             typeLabel,
             price,
+            pricePerDay,
+            days,
             date,
+            endDate,
             startTime,
             endTime,
             clientName,
@@ -41,24 +43,15 @@ export default async function handler(req, res) {
         }
 
         // Przygotuj daty
-        const startDate = new Date(`${date}T${startTime || '09:00'}:00`);
-        const endDate = new Date(`${date}T${endTime || '17:00'}:00`);
-
-        // Dla wynajmów wielodniowych - dodaj dni
-        const daysMap = {
-            '4h': 0,
-            '1-2d': 1,
-            '3-4d': 3,
-            '5-10d': 5,
-            '11-30d': 11,
-            'weekend': 2
-        };
-
-        if (daysMap[type] > 0) {
-            endDate.setDate(endDate.getDate() + daysMap[type]);
-        }
+        const startDateTime = new Date(`${date}T${startTime || '09:00'}:00`);
+        const endDateTime = new Date(`${endDate || date}T${endTime || '17:00'}:00`);
 
         // Formatuj opis
+        let dateInfo = formatDatePL(startDateTime);
+        if (date !== endDate && endDate) {
+            dateInfo = `${formatDatePL(startDateTime)} - ${formatDatePL(endDateTime)}`;
+        }
+
         const description = `REZERWACJA ONLINE
 
 Klient: ${clientName}
@@ -66,17 +59,17 @@ Telefon: ${clientPhone}
 Email: ${clientEmail || 'brak'}
 
 Typ wynajmu: ${typeLabel}
-Cena: ${price} zł
-Kaucja: 600 zł
+${days > 1 ? `Liczba dni: ${days}\nCena za dobe: ${pricePerDay} zl\n` : ''}Cena calkowita: ${price} zl
+Kaucja: 600 zl
 
-Data odbioru: ${formatDatePL(startDate)} o ${startTime || '09:00'}
-Data zwrotu: ${formatDatePL(endDate)} o ${endTime || '17:00'}
+Termin: ${dateInfo}
+Godziny: ${startTime || '09:00'} - ${endTime || '17:00'}
 
 ---
-Rezerwacja utworzona automatycznie przez stronę rezerwacji.
+Rezerwacja utworzona automatycznie przez strone rezerwacji.
 Wymaga potwierdzenia telefonicznego.`;
 
-        // Utwórz task w ClickUp
+        // Utworz task w ClickUp
         const taskResponse = await fetch(
             `https://api.clickup.com/api/v2/list/${CLICKUP_LIST_ID}/task`,
             {
@@ -89,8 +82,8 @@ Wymaga potwierdzenia telefonicznego.`;
                     name: `${clientPhone} - ${clientName}`,
                     description: description,
                     status: 'rezerwacje',
-                    start_date: startDate.getTime(),
-                    due_date: endDate.getTime(),
+                    start_date: startDateTime.getTime(),
+                    due_date: endDateTime.getTime(),
                     notify_all: true
                 })
             }
@@ -104,50 +97,48 @@ Wymaga potwierdzenia telefonicznego.`;
 
         const taskData = await taskResponse.json();
 
-        // Opcjonalnie: wyślij powiadomienie przez n8n webhook
-        // (możesz później dodać integrację z SMS)
+        // Opcjonalnie: wyslij powiadomienie przez n8n webhook
         try {
             await sendNotification({
                 clientName,
                 clientPhone,
                 typeLabel,
                 price,
-                date: formatDatePL(startDate),
+                days,
+                date: dateInfo,
                 startTime,
                 taskUrl: taskData.url
             });
         } catch (notifyError) {
             console.error('Notification error:', notifyError);
-            // Nie blokuj rezerwacji jeśli powiadomienie nie zadziała
         }
 
         return res.status(200).json({
             success: true,
             taskId: taskData.id,
             taskUrl: taskData.url,
-            message: 'Rezerwacja została utworzona'
+            message: 'Rezerwacja zostala utworzona'
         });
 
     } catch (error) {
         console.error('Booking error:', error);
         return res.status(500).json({
             success: false,
-            error: 'Nie udało się utworzyć rezerwacji. Spróbuj ponownie lub zadzwoń.'
+            error: 'Nie udalo sie utworzyc rezerwacji. Sprobuj ponownie lub zadzwon.'
         });
     }
 }
 
 function formatDatePL(date) {
     return date.toLocaleDateString('pl-PL', {
-        weekday: 'long',
+        weekday: 'short',
         year: 'numeric',
-        month: 'long',
+        month: 'short',
         day: 'numeric'
     });
 }
 
 async function sendNotification(data) {
-    // Webhook do n8n - możesz później skonfigurować
     const N8N_WEBHOOK = process.env.N8N_WEBHOOK_URL;
 
     if (!N8N_WEBHOOK) {
