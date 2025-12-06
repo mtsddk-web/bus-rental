@@ -88,42 +88,92 @@
             color: #0f172a;
         }
 
-        .rental-types {
+        .pricing-info {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 10px;
         }
 
-        .rental-type {
-            background: #f8fafc;
+        .pricing-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .pricing-label {
+            color: #64748b;
+        }
+
+        .pricing-value {
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        .day-type-selector {
+            display: none;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .day-type-selector.show {
+            display: block;
+        }
+
+        .day-type-selector h4 {
+            font-size: 0.9rem;
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+
+        .day-type-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .day-type-option {
+            flex: 1;
+            background: white;
             border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 15px 10px;
+            border-radius: 8px;
+            padding: 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .rental-type:hover {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
+        .day-type-option:hover {
+            border-color: #93c5fd;
         }
 
-        .rental-type.selected {
+        .day-type-option.selected {
             border-color: #2563eb;
-            background: #eff6ff;
+            background: #dbeafe;
         }
 
-        .rental-type .price {
-            font-size: 1.3rem;
+        .day-type-option .option-price {
+            font-size: 1.1rem;
             font-weight: 700;
             color: #2563eb;
         }
 
-        .rental-type .label {
-            font-size: 0.85rem;
+        .day-type-option .option-label {
+            font-size: 0.8rem;
             color: #64748b;
-            margin-top: 5px;
+            margin-top: 3px;
         }
 
         .calendar-container {
@@ -559,37 +609,21 @@
         <div id="booking-section">
             <form class="booking-form" id="bookingForm">
                 <div class="form-section">
-                    <h3>1. Wybierz rodzaj wynajmu</h3>
-                    <div class="rental-types" id="rentalTypes">
-                        <div class="rental-type" data-type="4h" data-price="190" data-min-days="0" data-max-days="0">
-                            <div class="price">190 zl</div>
-                            <div class="label">4 godziny</div>
-                        </div>
-                        <div class="rental-type" data-type="1-2d" data-price="250" data-min-days="1" data-max-days="2">
-                            <div class="price">250 zl</div>
-                            <div class="label">1-2 doby/doba</div>
-                        </div>
-                        <div class="rental-type" data-type="3-4d" data-price="230" data-min-days="3" data-max-days="4">
-                            <div class="price">230 zl</div>
-                            <div class="label">3-4 doby/doba</div>
-                        </div>
-                        <div class="rental-type" data-type="5-10d" data-price="210" data-min-days="5" data-max-days="10">
-                            <div class="price">210 zl</div>
-                            <div class="label">5-10 dob/doba</div>
-                        </div>
-                        <div class="rental-type" data-type="11-30d" data-price="190" data-min-days="11" data-max-days="30">
-                            <div class="price">190 zl</div>
-                            <div class="label">11-30 dni/doba</div>
-                        </div>
-                        <div class="rental-type" data-type="weekend" data-price="600" data-min-days="2" data-max-days="3">
-                            <div class="price">600 zl</div>
-                            <div class="label">Weekend</div>
+                    <h3>Cennik wynajmu</h3>
+                    <div class="pricing-info">
+                        <div class="pricing-grid">
+                            <div class="pricing-item"><span class="pricing-label">4 godziny</span><span class="pricing-value">190 zl</span></div>
+                            <div class="pricing-item"><span class="pricing-label">1-2 doby</span><span class="pricing-value">250 zl/doba</span></div>
+                            <div class="pricing-item"><span class="pricing-label">3-4 doby</span><span class="pricing-value">230 zl/doba</span></div>
+                            <div class="pricing-item"><span class="pricing-label">5-10 dob</span><span class="pricing-value">210 zl/doba</span></div>
+                            <div class="pricing-item"><span class="pricing-label">11-30 dni</span><span class="pricing-value">190 zl/doba</span></div>
+                            <div class="pricing-item"><span class="pricing-label">Weekend (pt-nd)</span><span class="pricing-value">600 zl</span></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <h3>2. Wybierz termin</h3>
+                    <h3>1. Wybierz termin</h3>
                     <div class="calendar-container">
                         <div class="calendar-header">
                             <button type="button" class="calendar-nav" id="prevMonth">&lt;</button>
@@ -617,6 +651,20 @@
                         <span id="dateRangeText"></span>
                     </div>
 
+                    <div class="day-type-selector" id="dayTypeSelector">
+                        <h4>Wybrales 1 dzien - jaki typ wynajmu?</h4>
+                        <div class="day-type-options">
+                            <div class="day-type-option" data-type="4h">
+                                <div class="option-price">190 zl</div>
+                                <div class="option-label">4 godziny</div>
+                            </div>
+                            <div class="day-type-option" data-type="1d">
+                                <div class="option-price">250 zl</div>
+                                <div class="option-label">Cala doba</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="time-selector" id="timeSelector" style="display: none;">
                         <div>
                             <label>Godzina odbioru</label>
@@ -634,7 +682,7 @@
                 </div>
 
                 <div class="form-section">
-                    <h3>3. Twoje dane kontaktowe</h3>
+                    <h3>2. Twoje dane kontaktowe</h3>
                     <div class="contact-fields">
                         <div>
                             <label>Imie i nazwisko *</label>
@@ -725,27 +773,26 @@
     </div>
 
     <script>
-        // Konfiguracja cennika
-        const PRICING = {
-            '4h': { price: 190, label: '4 godziny', minDays: 0, maxDays: 0, perDay: false },
-            '1-2d': { price: 250, label: '1-2 doby', minDays: 1, maxDays: 2, perDay: true },
-            '3-4d': { price: 230, label: '3-4 doby', minDays: 3, maxDays: 4, perDay: true },
-            '5-10d': { price: 210, label: '5-10 dob', minDays: 5, maxDays: 10, perDay: true },
-            '11-30d': { price: 190, label: '11-30 dni', minDays: 11, maxDays: 30, perDay: true },
-            'weekend': { price: 600, label: 'Weekend (pt-pn)', minDays: 2, maxDays: 3, perDay: false }
-        };
+        // Konfiguracja cennika - cena za dobe w zaleznosci od liczby dni
+        const PRICING_TIERS = [
+            { minDays: 1, maxDays: 2, pricePerDay: 250, label: '1-2 doby' },
+            { minDays: 3, maxDays: 4, pricePerDay: 230, label: '3-4 doby' },
+            { minDays: 5, maxDays: 10, pricePerDay: 210, label: '5-10 dob' },
+            { minDays: 11, maxDays: 30, pricePerDay: 190, label: '11-30 dni' }
+        ];
 
+        const PRICE_4H = 190;
+        const PRICE_WEEKEND = 600;
         const DEPOSIT = 600;
 
         // Stan aplikacji
         let state = {
-            selectedType: null,
             startDate: null,
             endDate: null,
+            singleDayType: null, // '4h' lub '1d' - tylko gdy wybrany 1 dzien
             bookedDates: [],
             currentMonth: new Date().getMonth(),
-            currentYear: new Date().getFullYear(),
-            selectingEndDate: false
+            currentYear: new Date().getFullYear()
         };
 
         const MONTHS_PL = ['Styczen', 'Luty', 'Marzec', 'Kwiecien', 'Maj', 'Czerwiec',
@@ -841,26 +888,15 @@
         }
 
         function selectDate(dateStr) {
-            const pricing = state.selectedType ? PRICING[state.selectedType] : null;
-
-            // Dla 4h - tylko jeden dzien
-            if (state.selectedType === '4h') {
-                state.startDate = dateStr;
-                state.endDate = dateStr;
-                document.getElementById('timeSelector').style.display = 'grid';
-                renderCalendar();
-                updatePriceSummary();
-                validateTimeRange();
-                return;
-            }
-
-            // Dla wielodniowych - wybor zakresu
+            // Logika: pierwszy klik = start, drugi klik = koniec
             if (!state.startDate || (state.startDate && state.endDate)) {
                 // Pierwszy klik lub reset
                 state.startDate = dateStr;
                 state.endDate = null;
-                state.selectingEndDate = true;
-            } else if (state.selectingEndDate) {
+                state.singleDayType = null;
+                document.getElementById('dayTypeSelector').classList.remove('show');
+                document.getElementById('timeSelector').style.display = 'none';
+            } else {
                 // Drugi klik - data koncowa
                 const start = new Date(state.startDate);
                 const end = new Date(dateStr);
@@ -869,35 +905,70 @@
                     // Jesli kliknieto wczesniejsza date, zamien
                     state.endDate = state.startDate;
                     state.startDate = dateStr;
+                } else if (dateStr === state.startDate) {
+                    // Kliknieto ta sama date - to jest jeden dzien
+                    state.endDate = dateStr;
                 } else {
                     state.endDate = dateStr;
                 }
-                state.selectingEndDate = false;
-                document.getElementById('timeSelector').style.display = 'grid';
+
+                const days = getDaysBetween(state.startDate, state.endDate);
+
+                if (days === 1) {
+                    // Jeden dzien - pokaz wybor 4h lub cala doba
+                    document.getElementById('dayTypeSelector').classList.add('show');
+                    document.getElementById('timeSelector').style.display = 'none';
+                } else {
+                    // Wiele dni - od razu pokaz godziny
+                    document.getElementById('dayTypeSelector').classList.remove('show');
+                    document.getElementById('timeSelector').style.display = 'grid';
+                    state.singleDayType = null;
+                }
             }
 
             renderCalendar();
             updatePriceSummary();
         }
 
+        // Obsluga wyboru typu dla jednego dnia
+        document.getElementById('dayTypeSelector').addEventListener('click', (e) => {
+            const option = e.target.closest('.day-type-option');
+            if (!option) return;
+
+            document.querySelectorAll('.day-type-option').forEach(el => el.classList.remove('selected'));
+            option.classList.add('selected');
+
+            state.singleDayType = option.dataset.type;
+            document.getElementById('timeSelector').style.display = 'grid';
+
+            // Dla 4h ustaw domyslne godziny
+            if (state.singleDayType === '4h') {
+                document.getElementById('startTime').value = '09:00';
+                document.getElementById('endTime').value = '13:00';
+            } else {
+                document.getElementById('startTime').value = '09:00';
+                document.getElementById('endTime').value = '17:00';
+            }
+
+            updatePriceSummary();
+            validateTimeRange();
+        });
+
         function updateDateRangeInfo() {
             const info = document.getElementById('dateRangeInfo');
             const text = document.getElementById('dateRangeText');
 
-            if (state.selectedType === '4h') {
-                if (state.startDate) {
-                    info.style.display = 'block';
-                    text.textContent = `Wybrany dzien: ${formatDatePL(state.startDate)}`;
-                } else {
-                    info.style.display = 'none';
-                }
-            } else if (state.startDate && !state.endDate && state.selectingEndDate) {
+            if (state.startDate && !state.endDate) {
                 info.style.display = 'block';
-                text.textContent = `Od: ${formatDatePL(state.startDate)} - Kliknij date zakonczenia`;
+                text.textContent = `Od: ${formatDatePL(state.startDate)} - Kliknij date zakonczenia (lub ta sama dla 1 dnia)`;
             } else if (state.startDate && state.endDate) {
                 const days = getDaysBetween(state.startDate, state.endDate);
                 info.style.display = 'block';
-                text.textContent = `Od: ${formatDatePL(state.startDate)} do: ${formatDatePL(state.endDate)} (${days} ${days === 1 ? 'dzien' : 'dni'})`;
+                if (days === 1) {
+                    text.textContent = `Wybrany dzien: ${formatDatePL(state.startDate)}`;
+                } else {
+                    text.textContent = `Od: ${formatDatePL(state.startDate)} do: ${formatDatePL(state.endDate)} (${days} dni)`;
+                }
             } else {
                 info.style.display = 'none';
             }
@@ -910,30 +981,9 @@
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
         }
 
-        // Wybor typu wynajmu
-        document.getElementById('rentalTypes').addEventListener('click', (e) => {
-            const type = e.target.closest('.rental-type');
-            if (!type) return;
-
-            document.querySelectorAll('.rental-type').forEach(el => el.classList.remove('selected'));
-            type.classList.add('selected');
-
-            state.selectedType = type.dataset.type;
-
-            // Reset dat przy zmianie typu
-            state.startDate = null;
-            state.endDate = null;
-            state.selectingEndDate = false;
-            document.getElementById('timeSelector').style.display = 'none';
-            document.getElementById('timeWarning').classList.remove('show');
-
-            renderCalendar();
-            updatePriceSummary();
-        });
-
         // Walidacja czasu dla 4h
         function validateTimeRange() {
-            if (state.selectedType !== '4h') {
+            if (state.singleDayType !== '4h') {
                 document.getElementById('timeWarning').classList.remove('show');
                 return true;
             }
@@ -952,6 +1002,37 @@
                 document.getElementById('timeWarning').classList.remove('show');
                 return true;
             }
+        }
+
+        // Funkcja obliczania ceny na podstawie liczby dni
+        function calculatePrice(days) {
+            if (days === 1 && state.singleDayType === '4h') {
+                return { price: PRICE_4H, pricePerDay: PRICE_4H, label: '4 godziny', perDay: false };
+            }
+
+            // Sprawdz czy to weekend (pt-nd)
+            if (days >= 2 && days <= 3 && isWeekend(state.startDate, state.endDate)) {
+                return { price: PRICE_WEEKEND, pricePerDay: PRICE_WEEKEND, label: 'Weekend', perDay: false };
+            }
+
+            // Znajdz odpowiedni tier cenowy
+            const tier = PRICING_TIERS.find(t => days >= t.minDays && days <= t.maxDays);
+            if (tier) {
+                return { price: tier.pricePerDay * days, pricePerDay: tier.pricePerDay, label: tier.label, perDay: true, days };
+            }
+
+            // Fallback dla bardzo dlugich wynajmow
+            const lastTier = PRICING_TIERS[PRICING_TIERS.length - 1];
+            return { price: lastTier.pricePerDay * days, pricePerDay: lastTier.pricePerDay, label: `${days} dni`, perDay: true, days };
+        }
+
+        function isWeekend(startStr, endStr) {
+            const start = new Date(startStr);
+            const end = new Date(endStr);
+            // Weekend to piatek (5) do niedzieli (0) lub poniedzialku (1)
+            const startDay = start.getDay();
+            const endDay = end.getDay();
+            return startDay === 5 && (endDay === 0 || endDay === 1);
         }
 
         document.getElementById('startTime').addEventListener('change', () => {
@@ -986,37 +1067,35 @@
         // Aktualizacja podsumowania ceny
         function updatePriceSummary() {
             const summary = document.getElementById('priceSummary');
-            const submitBtn = document.getElementById('submitBtn');
 
-            if (!state.selectedType || !state.startDate) {
+            // Musimy miec wybrana date koncowa
+            if (!state.startDate || !state.endDate) {
                 summary.style.display = 'none';
-                submitBtn.disabled = true;
+                checkFormValidity();
                 return;
             }
 
-            // Dla wielodniowych wymuszaj date koncowa
-            if (state.selectedType !== '4h' && !state.endDate) {
+            const days = getDaysBetween(state.startDate, state.endDate);
+
+            // Dla 1 dnia musimy miec wybrany typ (4h lub cala doba)
+            if (days === 1 && !state.singleDayType) {
                 summary.style.display = 'none';
-                submitBtn.disabled = true;
+                checkFormValidity();
                 return;
             }
 
-            const pricing = PRICING[state.selectedType];
-            let totalRental = pricing.price;
-            let daysCount = 1;
+            const pricing = calculatePrice(days);
 
-            if (pricing.perDay && state.endDate) {
-                daysCount = getDaysBetween(state.startDate, state.endDate);
-                totalRental = pricing.price * daysCount;
-                document.getElementById('summaryDays').textContent = daysCount;
+            if (pricing.perDay) {
+                document.getElementById('summaryDays').textContent = days;
                 document.getElementById('summaryDaysRow').style.display = 'flex';
             } else {
                 document.getElementById('summaryDaysRow').style.display = 'none';
             }
 
             document.getElementById('summaryType').textContent = pricing.label;
-            document.getElementById('summaryBase').textContent = `${totalRental} zl`;
-            document.getElementById('summaryTotal').textContent = `${totalRental + DEPOSIT} zl`;
+            document.getElementById('summaryBase').textContent = `${pricing.price} zl`;
+            document.getElementById('summaryTotal').textContent = `${pricing.price + DEPOSIT} zl`;
 
             summary.style.display = 'block';
             checkFormValidity();
@@ -1076,11 +1155,11 @@
                 emailError.classList.remove('show');
             }
 
-            const hasDate = state.selectedType === '4h'
-                ? state.startDate
-                : (state.startDate && state.endDate);
+            const days = state.startDate && state.endDate ? getDaysBetween(state.startDate, state.endDate) : 0;
+            const hasValidDates = state.startDate && state.endDate;
+            const hasSingleDayType = days !== 1 || state.singleDayType;
 
-            submitBtn.disabled = !(state.selectedType && hasDate && name && phoneValid && phone && emailValid && terms && timeValid);
+            submitBtn.disabled = !(hasValidDates && hasSingleDayType && name && phoneValid && phone && emailValid && terms && timeValid);
         }
 
         ['clientName', 'clientPhone', 'clientEmail', 'termsAccepted'].forEach(id => {
@@ -1099,15 +1178,14 @@
             form.style.display = 'none';
             loading.classList.add('show');
 
-            const pricing = PRICING[state.selectedType];
-            const daysCount = state.endDate ? getDaysBetween(state.startDate, state.endDate) : 1;
-            const totalPrice = pricing.perDay ? pricing.price * daysCount : pricing.price;
+            const daysCount = getDaysBetween(state.startDate, state.endDate);
+            const pricing = calculatePrice(daysCount);
 
             const bookingData = {
-                type: state.selectedType,
+                type: daysCount === 1 ? state.singleDayType : `${daysCount}d`,
                 typeLabel: pricing.label,
-                price: totalPrice,
-                pricePerDay: pricing.price,
+                price: pricing.price,
+                pricePerDay: pricing.pricePerDay,
                 days: daysCount,
                 date: state.startDate,
                 endDate: state.endDate || state.startDate,
