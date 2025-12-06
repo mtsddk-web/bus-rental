@@ -1,8 +1,6 @@
 // API endpoint: Tworzy rezerwacje w ClickUp + wysyla emaile
 // POST /api/book
 
-import { Resend } from 'resend';
-
 export default async function handler(req, res) {
     // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -68,8 +66,7 @@ Termin: ${dateInfo}
 Godziny: ${startTime || '09:00'} - ${endTime || '17:00'}
 
 ---
-Rezerwacja utworzona automatycznie przez strone rezerwacji.
-Wymaga potwierdzenia telefonicznego.`;
+Rezerwacja utworzona automatycznie przez strone rezerwacji.`;
 
         // Utworz task w ClickUp
         const taskResponse = await fetch(
@@ -99,7 +96,7 @@ Wymaga potwierdzenia telefonicznego.`;
 
         const taskData = await taskResponse.json();
 
-        // Wyslij emaile
+        // Wyslij emaile przez SMTP
         const emailData = {
             clientName,
             clientPhone,
@@ -147,15 +144,16 @@ function formatDatePL(date) {
 }
 
 async function sendEmails(data) {
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const SMTP_HOST = process.env.SMTP_HOST || 'smtp.zenbox.pl';
+    const SMTP_PORT = process.env.SMTP_PORT || '587';
+    const SMTP_USER = process.env.SMTP_USER || 'biuro@sundek-energia.pl';
+    const SMTP_PASS = process.env.SMTP_PASS;
     const OWNER_EMAIL = process.env.OWNER_EMAIL || 'mts.ddk@gmail.com';
 
-    if (!RESEND_API_KEY) {
-        console.log('No Resend API key configured, skipping emails');
+    if (!SMTP_PASS) {
+        console.log('No SMTP password configured, skipping emails');
         return;
     }
-
-    const resend = new Resend(RESEND_API_KEY);
 
     const {
         clientName,
@@ -170,9 +168,22 @@ async function sendEmails(data) {
         taskUrl
     } = data;
 
+    // Użyj nodemailer przez dynamic import (Vercel obsługuje)
+    const nodemailer = await import('nodemailer');
+
+    const transporter = nodemailer.default.createTransport({
+        host: SMTP_HOST,
+        port: parseInt(SMTP_PORT),
+        secure: false, // TLS
+        auth: {
+            user: SMTP_USER,
+            pass: SMTP_PASS
+        }
+    });
+
     // 1. Email do wlasciciela (Ciebie)
-    await resend.emails.send({
-        from: 'Rezerwacje Bus <onboarding@resend.dev>',
+    await transporter.sendMail({
+        from: `"Rezerwacje Bus" <${SMTP_USER}>`,
         to: OWNER_EMAIL,
         subject: `🚐 Nowa rezerwacja: ${clientName} - ${dateInfo}`,
         html: `
@@ -194,36 +205,36 @@ async function sendEmails(data) {
 
     // 2. Email do klienta (jesli podal email)
     if (clientEmail) {
-        await resend.emails.send({
-            from: 'Wynajem Busa <onboarding@resend.dev>',
+        await transporter.sendMail({
+            from: `"Wynajem Busa - Mateusz Dudek" <${SMTP_USER}>`,
             to: clientEmail,
             subject: `Potwierdzenie rezerwacji busa - ${dateInfo}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #2563eb;">Dziekujemy za rezerwacje!</h2>
-                    <p>Cześć ${clientName.split(' ')[0]},</p>
-                    <p>Twoja rezerwacja busa Renault Master została przyjęta.</p>
+                    <p>Czesc ${clientName.split(' ')[0]},</p>
+                    <p>Twoja rezerwacja busa Renault Master zostala przyjeta.</p>
 
                     <div style="background: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
-                        <h3 style="margin-top: 0; color: #0f172a;">Szczegóły rezerwacji:</h3>
+                        <h3 style="margin-top: 0; color: #0f172a;">Szczegoly rezerwacji:</h3>
                         <p><strong>Termin:</strong> ${dateInfo}</p>
                         <p><strong>Godziny:</strong> ${startTime} - ${endTime}</p>
                         <p><strong>Typ wynajmu:</strong> ${typeLabel}</p>
-                        <p><strong>Cena:</strong> ${price} zł</p>
-                        <p><strong>Kaucja zwrotna:</strong> 600 zł</p>
+                        <p><strong>Cena:</strong> ${price} zl</p>
+                        <p><strong>Kaucja zwrotna:</strong> 600 zl</p>
                     </div>
 
                     <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 15px; margin: 20px 0;">
                         <strong>Co dalej?</strong>
                         <ul style="margin: 10px 0; padding-left: 20px;">
-                            <li>Odbiór busa: Tychy lub Mikołów (ustalmy telefonicznie)</li>
-                            <li>Przy odbiorze: dowód osobisty + prawo jazdy kat. B</li>
-                            <li>Płatność: gotówka, BLIK lub przelew</li>
-                            <li>Limit: 200 km/dobę (powyżej +0,40 zł/km)</li>
+                            <li>Odbior busa: Tychy lub Mikolow (zadzwon dzien wczesniej)</li>
+                            <li>Przy odbiorze: dowod osobisty + prawo jazdy kat. B</li>
+                            <li>Platnosc: gotowka, BLIK lub przelew</li>
+                            <li>Limit: 200 km/dobe (powyzej +0,40 zl/km)</li>
                         </ul>
                     </div>
 
-                    <p>W razie pytań dzwoń: <a href="tel:+48518618058">518 618 058</a></p>
+                    <p>W razie pytan dzwon: <a href="tel:+48518618058">518 618 058</a></p>
 
                     <p style="color: #64748b; font-size: 14px; margin-top: 30px;">
                         Pozdrawiam,<br>
