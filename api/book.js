@@ -1,5 +1,7 @@
-// API endpoint: Tworzy rezerwacje w ClickUp
+// API endpoint: Tworzy rezerwacje w ClickUp + wysyla emaile
 // POST /api/book
+
+import { Resend } from 'resend';
 
 export default async function handler(req, res) {
     // CORS
@@ -97,20 +99,26 @@ Wymaga potwierdzenia telefonicznego.`;
 
         const taskData = await taskResponse.json();
 
-        // Opcjonalnie: wyslij powiadomienie przez n8n webhook
+        // Wyslij emaile
+        const emailData = {
+            clientName,
+            clientPhone,
+            clientEmail,
+            typeLabel,
+            price,
+            pricePerDay,
+            days,
+            dateInfo,
+            startTime,
+            endTime,
+            taskUrl: taskData.url
+        };
+
         try {
-            await sendNotification({
-                clientName,
-                clientPhone,
-                typeLabel,
-                price,
-                days,
-                date: dateInfo,
-                startTime,
-                taskUrl: taskData.url
-            });
-        } catch (notifyError) {
-            console.error('Notification error:', notifyError);
+            await sendEmails(emailData);
+        } catch (emailError) {
+            console.error('Email error:', emailError);
+            // Nie blokuj - rezerwacja i tak jest w ClickUp
         }
 
         return res.status(200).json({
@@ -138,20 +146,92 @@ function formatDatePL(date) {
     });
 }
 
-async function sendNotification(data) {
-    const N8N_WEBHOOK = process.env.N8N_WEBHOOK_URL;
+async function sendEmails(data) {
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const OWNER_EMAIL = process.env.OWNER_EMAIL || 'mts.ddk@gmail.com';
 
-    if (!N8N_WEBHOOK) {
-        console.log('No N8N webhook configured, skipping notification');
+    if (!RESEND_API_KEY) {
+        console.log('No Resend API key configured, skipping emails');
         return;
     }
 
-    await fetch(N8N_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            type: 'new_bus_booking',
-            ...data
-        })
+    const resend = new Resend(RESEND_API_KEY);
+
+    const {
+        clientName,
+        clientPhone,
+        clientEmail,
+        typeLabel,
+        price,
+        days,
+        dateInfo,
+        startTime,
+        endTime,
+        taskUrl
+    } = data;
+
+    // 1. Email do wlasciciela (Ciebie)
+    await resend.emails.send({
+        from: 'Rezerwacje Bus <onboarding@resend.dev>',
+        to: OWNER_EMAIL,
+        subject: `🚐 Nowa rezerwacja: ${clientName} - ${dateInfo}`,
+        html: `
+            <h2>Nowa rezerwacja busa!</h2>
+            <table style="border-collapse: collapse; width: 100%; max-width: 500px;">
+                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Klient:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${clientName}</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Telefon:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;"><a href="tel:${clientPhone}">${clientPhone}</a></td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Email:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${clientEmail || 'brak'}</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Termin:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${dateInfo}</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Godziny:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${startTime} - ${endTime}</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Typ:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${typeLabel}${days > 1 ? ` (${days} dni)` : ''}</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Cena:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>${price} zl</strong> + 600 zl kaucja</td></tr>
+            </table>
+            <p style="margin-top: 20px;">
+                <a href="${taskUrl}" style="background: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Zobacz w ClickUp</a>
+            </p>
+        `
     });
+
+    // 2. Email do klienta (jesli podal email)
+    if (clientEmail) {
+        await resend.emails.send({
+            from: 'Wynajem Busa <onboarding@resend.dev>',
+            to: clientEmail,
+            subject: `Potwierdzenie rezerwacji busa - ${dateInfo}`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #2563eb;">Dziekujemy za rezerwacje!</h2>
+                    <p>Cześć ${clientName.split(' ')[0]},</p>
+                    <p>Twoja rezerwacja busa Renault Master została przyjęta.</p>
+
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                        <h3 style="margin-top: 0; color: #0f172a;">Szczegóły rezerwacji:</h3>
+                        <p><strong>Termin:</strong> ${dateInfo}</p>
+                        <p><strong>Godziny:</strong> ${startTime} - ${endTime}</p>
+                        <p><strong>Typ wynajmu:</strong> ${typeLabel}</p>
+                        <p><strong>Cena:</strong> ${price} zł</p>
+                        <p><strong>Kaucja zwrotna:</strong> 600 zł</p>
+                    </div>
+
+                    <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 15px; margin: 20px 0;">
+                        <strong>Co dalej?</strong>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Odbiór busa: Tychy lub Mikołów (ustalmy telefonicznie)</li>
+                            <li>Przy odbiorze: dowód osobisty + prawo jazdy kat. B</li>
+                            <li>Płatność: gotówka, BLIK lub przelew</li>
+                            <li>Limit: 200 km/dobę (powyżej +0,40 zł/km)</li>
+                        </ul>
+                    </div>
+
+                    <p>W razie pytań dzwoń: <a href="tel:+48518618058">518 618 058</a></p>
+
+                    <p style="color: #64748b; font-size: 14px; margin-top: 30px;">
+                        Pozdrawiam,<br>
+                        Mateusz Dudek<br>
+                        Wynajem Busa Renault Master
+                    </p>
+                </div>
+            `
+        });
+    }
 }

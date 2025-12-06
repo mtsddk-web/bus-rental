@@ -7,6 +7,8 @@
     "build": "echo 'Static site - no build needed'",
     "deploy": "vercel --prod"
   },
-  "dependencies": {},
+  "dependencies": {
+    "resend": "^4.0.0"
+  },
   "devDependencies": {}
 }
