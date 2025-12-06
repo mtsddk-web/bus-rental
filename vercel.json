@@ -1,16 +1,5 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "public/**", "use": "@vercel/static" },
-    { "src": "api/**/*.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/public/$1" }
-  ],
-  "env": {
-    "CLICKUP_API_TOKEN": "@clickup-api-token",
-    "CLICKUP_LIST_ID": "901503815767",
-    "NOTIFICATION_PHONE": "518618058"
-  }
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/public/$1" }
+  ]
 }
