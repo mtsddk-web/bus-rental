@@ -303,6 +303,32 @@
             color: #94a3b8;
         }
 
+        .contact-fields input.invalid {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .contact-fields input.valid {
+            border-color: #16a34a;
+        }
+
+        .field-error {
+            display: none;
+            color: #dc2626;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+
+        .field-hint {
+            font-weight: 400;
+            color: #94a3b8;
+            font-size: 0.75rem;
+        }
+
         .price-summary {
             background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
             border-radius: 12px;
@@ -612,15 +638,17 @@
                     <div class="contact-fields">
                         <div>
                             <label>Imie i nazwisko *</label>
-                            <input type="text" id="clientName" placeholder="Jan Kowalski" required>
+                            <input type="text" id="clientName" placeholder="Jan Kowalski" required minlength="3">
                         </div>
                         <div>
-                            <label>Numer telefonu *</label>
-                            <input type="tel" id="clientPhone" placeholder="+48 123 456 789" required>
+                            <label>Numer telefonu * <span class="field-hint">(9 cyfr, np. 123456789 lub +48 123 456 789)</span></label>
+                            <input type="tel" id="clientPhone" placeholder="123 456 789" required>
+                            <div class="field-error" id="phoneError">Podaj poprawny polski numer telefonu (9 cyfr)</div>
                         </div>
                         <div>
                             <label>Email (opcjonalnie)</label>
                             <input type="email" id="clientEmail" placeholder="jan@example.com">
+                            <div class="field-error" id="emailError">Podaj poprawny adres email</div>
                         </div>
                     </div>
                 </div>
@@ -994,19 +1022,65 @@
             checkFormValidity();
         }
 
+        // Walidacja telefonu - polski numer 9 cyfr
+        function validatePhone(phone) {
+            // Usun wszystkie nie-cyfry
+            const digits = phone.replace(/\D/g, '');
+            // Jesli zaczyna sie od 48, usun
+            const cleanDigits = digits.startsWith('48') ? digits.slice(2) : digits;
+            // Musi byc dokladnie 9 cyfr
+            return cleanDigits.length === 9;
+        }
+
+        // Walidacja email
+        function validateEmail(email) {
+            if (!email) return true; // Opcjonalne pole
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
         // Sprawdz poprawnosc formularza
         function checkFormValidity() {
             const submitBtn = document.getElementById('submitBtn');
             const name = document.getElementById('clientName').value.trim();
             const phone = document.getElementById('clientPhone').value.trim();
+            const email = document.getElementById('clientEmail').value.trim();
             const terms = document.getElementById('termsAccepted').checked;
             const timeValid = validateTimeRange();
+
+            // Walidacja telefonu
+            const phoneInput = document.getElementById('clientPhone');
+            const phoneError = document.getElementById('phoneError');
+            const phoneValid = validatePhone(phone);
+
+            if (phone.length > 0) {
+                phoneInput.classList.toggle('invalid', !phoneValid);
+                phoneInput.classList.toggle('valid', phoneValid);
+                phoneError.classList.toggle('show', !phoneValid);
+            } else {
+                phoneInput.classList.remove('invalid', 'valid');
+                phoneError.classList.remove('show');
+            }
+
+            // Walidacja email
+            const emailInput = document.getElementById('clientEmail');
+            const emailError = document.getElementById('emailError');
+            const emailValid = validateEmail(email);
+
+            if (email.length > 0) {
+                emailInput.classList.toggle('invalid', !emailValid);
+                emailInput.classList.toggle('valid', emailValid);
+                emailError.classList.toggle('show', !emailValid);
+            } else {
+                emailInput.classList.remove('invalid', 'valid');
+                emailError.classList.remove('show');
+            }
 
             const hasDate = state.selectedType === '4h'
                 ? state.startDate
                 : (state.startDate && state.endDate);
 
-            submitBtn.disabled = !(state.selectedType && hasDate && name && phone && terms && timeValid);
+            submitBtn.disabled = !(state.selectedType && hasDate && name && phoneValid && phone && emailValid && terms && timeValid);
         }
 
         ['clientName', 'clientPhone', 'clientEmail', 'termsAccepted'].forEach(id => {
