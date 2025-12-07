@@ -880,10 +880,8 @@
 
         function isDateBooked(dateStr) {
             return state.bookedDates.some(booking => {
-                const start = new Date(booking.start);
-                const end = new Date(booking.end);
-                const check = new Date(dateStr);
-                return check >= start && check <= end;
+                // Porownuj tylko daty jako stringi YYYY-MM-DD (unikaj problemow ze strefami czasowymi)
+                return dateStr >= booking.start && dateStr <= booking.end;
             });
         }
 
